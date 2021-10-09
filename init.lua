@@ -1,12 +1,19 @@
+-- ┳━┓┏━┓  ┓━┓┏━┓┏┏┓┳━┓  ┓ ┳┏━┓┳━┓┳┏ 
+-- ┃ ┃┃ ┃  ┗━┓┃ ┃┃┃┃┣━   ┃┃┃┃ ┃┃┳┛┣┻┓
+-- ┇━┛┛━┛  ━━┛┛━┛┛ ┇┻━┛  ┗┻┇┛━┛┇┗┛┇ ┛
+
 local opt = vim.opt
 local g = vim.g
    
--- Install packer
 local install_path = vim.fn.stdpath "data" .. "/site/pack/packer/start/packer.nvim"
 
 if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
   vim.fn.execute("!git clone https://github.com/wbthomason/packer.nvim " .. install_path)
 end
+
+-- ┳━┓┳  ┳ ┓┏━┓o┏┓┓┓━┓
+-- ┃━┛┃  ┃ ┃┃ ┳┃┃┃┃┗━┓
+-- ┇  ┇━┛┇━┛┇━┛┇┇┗┛━━┛
 
 local use = require("packer").use
 require("packer").startup(function()
@@ -34,7 +41,9 @@ require("packer").startup(function()
   use {"npxbr/glow.nvim", ft = {"markdown"}}
 end)
 
--- vim.cmd [[colorscheme tokyonight]]
+-- ┏━┓┳━┓┏┓┓o┏━┓┏┓┓┓━┓
+-- ┃ ┃┃━┛ ┃ ┃┃ ┃┃┃┃┗━┓
+-- ┛━┛┇   ┇ ┇┛━┛┇┗┛━━┛
 
 opt.termguicolors = true
 opt.ruler = false
@@ -94,6 +103,9 @@ for _, plugin in pairs(disabled_built_ins) do
     vim.g["loaded_" .. plugin] = 1
 end
 
+-- ┳━┓┳ ┓┏┓┓┏━┓┏┓┓o┏━┓┏┓┓┓━┓
+-- ┣━ ┃ ┃┃┃┃┃   ┃ ┃┃ ┃┃┃┃┗━┓
+-- ┇  ┇━┛┇┗┛┗━┛ ┇ ┇┛━┛┇┗┛━━┛
 
 function navi(wincmd, direction)
 
@@ -113,6 +125,10 @@ function map(mode, lhs, rhs, opts)
     vim.api.nvim_set_keymap(mode, lhs, rhs, options)
 end
 
+-- ┳━┓o┏┓┓┳━┓o┏┓┓┏━┓┓━┓
+-- ┃━┃┃┃┃┃┃ ┃┃┃┃┃┃ ┳┗━┓
+-- ┇━┛┇┇┗┛┇━┛┇┇┗┛┇━┛━━┛
+
 opt = {}
 
 --Remap space as leader key
@@ -131,6 +147,7 @@ map("n", "<Leader>fw", ":Telescope live_grep<CR>", opt)
 map("n", "<Leader><space>", ":Telescope buffers<CR>", opt)
 map("n", "<Leader>fh", ":Telescope help_tags<CR>", opt)
 map("n", "<Leader>fo", ":Telescope oldfiles<CR>", opt)
+map("n", "<Leader>c", ":.!toilet -f rustofat<CR>:norm gc2j<CR>", opt)
 
 --Remap for dealing with word wrap
 map('n', 'k', "v:count == 0 ? 'gk' : 'k'", { noremap = true, expr = true, silent = true })
@@ -167,6 +184,11 @@ map('n', '<leader>O',
     ':<C-u>call append(line(".")-1, repeat([""], v:count1))<CR>',
     { silent = true })
 
+-- ┳━┓┳  ┳ ┓┏━┓o┏┓┓  ┓━┓┳━┓┏┓┓┳ ┓┳━┓
+-- ┃━┛┃  ┃ ┃┃ ┳┃┃┃┃  ┗━┓┣━  ┃ ┃ ┃┃━┛
+-- ┇  ┇━┛┇━┛┇━┛┇┇┗┛  ━━┛┻━┛ ┇ ┇━┛┇  
+
+-- colorscheme
 require('doom-one').setup {
     cursor_coloring = true,
     italic_comments = true,
@@ -178,34 +200,15 @@ require('doom-one').setup {
     },
 }
 
+-- blankline
 require("indent_blankline").setup {
     char = "│",
     buftype_exclude = {"terminal", "nofile", },
     filetype_exclude = {"help", "packer", "markdown", "mail", },
-    -- char_highlight_list = { "Whitespace", },
     show_trailing_blankline_indent = false,
 }
 
--- require("indent_blankline").setup {
---     space_char_blankline = " ",
---     char_highlight_list = {
---         "NonText",
---     },
--- }
-
-local colors = {
-  black        = '#282828',
-  white        = '#ebdbb2',
-  red          = '#fb4934',
-  green        = '#b8bb26',
-  blue         = '#83a598',
-  yellow       = '#fe8019',
-  gray         = '#a89984',
-  darkgray     = '#3c3836',
-  lightgray    = '#504945',
-  inactivegray = '#7c6f64',
-}
-
+-- truezen
 require("true-zen").setup {
   modes = {
       ataraxis = {
@@ -218,9 +221,15 @@ require("true-zen").setup {
   },
 }
 
+-- lualine - stop yak shaving and use a fucking default.
 require('lualine').setup()
+
+-- pretty pretty pretty good
 require('colorizer').setup()
+
+-- gcc yo
 require('nvim_comment').setup()
+
 -- require('toggleterm').setup{
 --   -- size can be a number or function which is passed the current terminal
 --   open_mapping = [[<leader>t]],
@@ -250,7 +259,7 @@ require('nvim_comment').setup()
 --   },
 -- }
 
--- Gitsigns
+-- gitsigns
 require('gitsigns').setup {
   signs = {
     add = { hl = 'GitGutterAdd', text = '+' },
@@ -261,7 +270,7 @@ require('gitsigns').setup {
   },
 }
 
--- Telescope
+-- telescope
 require('telescope').setup {
   defaults = {
     prompt_prefix = " ",
@@ -292,15 +301,11 @@ require('telescope').setup {
   },
 }
 
--- This will load fzy_native and have it override the default file sorter
+-- why does zoxide work without this require? 
 require('telescope').load_extension('fzf')
 
--- Treesitter configuration
--- Parsers must be installed manually via :TSInstall
+-- treeshitter 
 require('nvim-treesitter.configs').setup {
-  highlight = {
-    enable = true, -- false will disable the whole extension
-  },
   incremental_selection = {
     enable = true,
     keymaps = {
@@ -314,6 +319,10 @@ require('nvim-treesitter.configs').setup {
     enable = true,
   },
 }
+
+-- ┳━┓┳ ┓┏┓┓┏━┓┏━┓┏━┓┏┏┓┏┏┓┳━┓┏┓┓┳━┓┓━┓
+-- ┃━┫┃ ┃ ┃ ┃ ┃┃  ┃ ┃┃┃┃┃┃┃┃━┫┃┃┃┃ ┃┗━┓
+-- ┛ ┇┇━┛ ┇ ┛━┛┗━┛┛━┛┛ ┇┛ ┇┛ ┇┇┗┛┇━┛━━┛
 
 -- Highlight on yank
 vim.api.nvim_exec( [[
