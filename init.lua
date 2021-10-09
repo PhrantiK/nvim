@@ -192,11 +192,9 @@ map('n', '<leader>O',
 require('doom-one').setup {
     cursor_coloring = true,
     italic_comments = true,
-    enable_treesitter = true,
     plugins_integrations = {
         gitsigns = true,
         telescope = true,
-        indent_blankline = true,
     },
 }
 
