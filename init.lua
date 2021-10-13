@@ -56,8 +56,7 @@ require("packer").startup(function()
   use { "windwp/nvim-autopairs" }
   use { "lukas-reineke/indent-blankline.nvim" }
   use { "pocco81/truezen.nvim" }
-  -- use { "akinsho/toggleterm.nvim" }
-
+  use { "akinsho/toggleterm.nvim" }
 end)
 
 -- ┏━┓┳━┓┏┓┓o┏━┓┏┓┓┓━┓
@@ -166,7 +165,12 @@ map("n", "<Leader>fw", ":Telescope live_grep<CR>", opt)
 map("n", "<Leader><space>", ":Telescope buffers<CR>", opt)
 map("n", "<Leader>fh", ":Telescope help_tags<CR>", opt)
 map("n", "<Leader>fo", ":Telescope oldfiles<CR>", opt)
+
+-- Oh, those comment headers look nice.
 map("n", "<Leader>c", ":.!toilet -f rustofat<CR>:norm gc2j<CR>", opt)
+
+-- Exit terminal with esc
+map("t", "<Esc>", "<C-\\><C-n>", opt)
 
 --Remap for dealing with word wrap
 map('n', 'k', "v:count == 0 ? 'gk' : 'k'", { noremap = true, expr = true, silent = true })
@@ -256,34 +260,34 @@ require('nvim-autopairs').setup({
   enable_check_bracket_line = false
 })
 
--- require('toggleterm').setup{
---   -- size can be a number or function which is passed the current terminal
---   open_mapping = [[<leader>t]],
---   hide_numbers = true, -- hide the number column in toggleterm buffers
---   shade_filetypes = {},
---   shade_terminals = true,
---   shading_factor = '1', -- the degree by which to darken to terminal colour, default: 1 for dark backgrounds, 3 for light
---   start_in_insert = true,
---   insert_mappings = true, -- whether or not the open mapping applies in insert mode
---   persist_size = true,
---   direction = 'float',
---   close_on_exit = true, -- close the terminal window when the process exits
---   -- This field is only relevant if direction is set to 'float'
---   float_opts = {
---     -- The border key is *almost* the same as 'nvim_open_win'
---     -- see :h nvim_open_win for details on borders however
---     -- the 'curved' border is a custom border type
---     -- not natively supported but implemented in this plugin.
---     border = 'curved',
---     width = 100,
---     height = 30,
---     winblend = 3,
---     highlights = {
---       border = "Normal",
---       background = "Normal",
---     },
---   },
--- }
+require('toggleterm').setup{
+  -- size can be a number or function which is passed the current terminal
+  open_mapping = [[<leader>t]],
+  hide_numbers = true, -- hide the number column in toggleterm buffers
+  shade_filetypes = {},
+  shade_terminals = true,
+  shading_factor = '1', -- the degree by which to darken to terminal colour, default: 1 for dark backgrounds, 3 for light
+  start_in_insert = true,
+  insert_mappings = false, -- whether or not the open mapping applies in insert mode
+  persist_size = true,
+  direction = 'float',
+  close_on_exit = true, -- close the terminal window when the process exits
+  -- This field is only relevant if direction is set to 'float'
+  float_opts = {
+    -- The border key is *almost* the same as 'nvim_open_win'
+    -- see :h nvim_open_win for details on borders however
+    -- the 'curved' border is a custom border type
+    -- not natively supported but implemented in this plugin.
+    border = 'curved',
+    width = 100,
+    height = 30,
+    winblend = 3,
+    highlights = {
+      border = "Normal",
+      background = "Normal",
+    },
+  },
+}
 
 require('gitsigns').setup {
    signs = {
@@ -478,19 +482,6 @@ for type, icon in pairs(signs) do
   vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
 end
 
--- vim.lsp.handlers["textDocument/publishDiagnostics"] =
---     vim.lsp.with(
---     vim.lsp.diagnostic.on_publish_diagnostics,
---     {
---         virtual_text = {
---             prefix = "",
---             spacing = 0
---         },
---         signs = true,
---         underline = true
---     }
--- )
-
 -- Set completeopt to have a better completion experience
 vim.o.completeopt = 'menuone,noselect'
 
@@ -553,8 +544,8 @@ cmp.setup {
       end,
    },
    mapping = {
-      ["<C-p>"] = cmp.mapping.select_prev_item(),
-      ["<C-n>"] = cmp.mapping.select_next_item(),
+      ["<C-k>"] = cmp.mapping.select_prev_item(),
+      ["<C-j>"] = cmp.mapping.select_next_item(),
       ["<C-d>"] = cmp.mapping.scroll_docs(-4),
       ["<C-f>"] = cmp.mapping.scroll_docs(4),
       ["<C-Space>"] = cmp.mapping.complete(),
