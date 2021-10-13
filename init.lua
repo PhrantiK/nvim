@@ -302,6 +302,12 @@ require('gitsigns').setup {
 -- telescope
 require('telescope').setup {
   defaults = {
+    mappings = {
+      i = {
+        ["<C-j>"] = "move_selection_next",
+        ["<C-k>"] = "move_selection_previous"
+      }
+    },
     prompt_prefix = " ",
     selection_caret = " ",
     layout_config = {
