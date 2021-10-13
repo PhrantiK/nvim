@@ -22,30 +22,42 @@ require("packer").startup(function()
       { "nvim-lua/plenary.nvim" },
       { "nvim-telescope/telescope-fzf-native.nvim", run = "make" },
       { "jvgrootveld/telescope-zoxide", } }
-  use { "terrortylor/nvim-comment" }
-  use { "NTBBloodbath/doom-one.nvim" }
-  -- use { "folke/tokyonight.nvim" }
-  -- use { "rafamadriz/neon" }
-  -- use { "rafamadriz/themes.nvim" }
-  use { "norcalli/nvim-colorizer.lua" }
-  use { "shadmansaleh/lualine.nvim", requires = {"kyazdani42/nvim-web-devicons"} }
-  use { "lukas-reineke/indent-blankline.nvim" }
-  use { "lewis6991/gitsigns.nvim", requires = { "nvim-lua/plenary.nvim" } }
+
+  -- lsp crap
   use { "nvim-treesitter/nvim-treesitter" }
   use { "neovim/nvim-lspconfig" }
   use { "kabouzeid/nvim-lspinstall" }
   use { "hrsh7th/nvim-cmp" } -- Autocompletion plugin
   use { "hrsh7th/cmp-nvim-lsp" } -- LSP source for nvim-cmp
   use { "saadparwaiz1/cmp_luasnip" } -- Snippets source for nvim-cmp
-  use { "onsails/lspind-nvim" } -- Snippets source for nvim-cmp
+  use { "onsails/lspkind-nvim" } -- Snippets source for nvim-cmp
   use { "L3MON4D3/LuaSnip" } -- Snippets plugin
-  use { "pocco81/truezen.nvim" }
-  -- use { "akinsho/toggleterm.nvim" }
+
+  -- filetype plugins
   use {"amadeus/vim-mjml", ft = {"mjml"}}
   use {"itspriddle/vim-marked", ft = {"markdown"}}
   use {"plasticboy/vim-markdown", ft = {"markdown"}}
   -- use {"polarmutex/beancount.nvim", ft = {"beancount"}}
   use {"npxbr/glow.nvim", ft = {"markdown"}}
+  use { "Iron-E/nvim-libmodal", ft = {"markdown"}}
+  use { "Iron-E/nvim-typora", ft = {"markdown"}}
+
+  -- colors & ui!
+  use { "shadmansaleh/lualine.nvim", requires = {"kyazdani42/nvim-web-devicons"} }
+  use { "norcalli/nvim-colorizer.lua" }
+  use { "NTBBloodbath/doom-one.nvim" }
+  -- use { "folke/tokyonight.nvim" }
+  -- use { "rafamadriz/neon" }
+  -- use { "rafamadriz/themes.nvim" }
+
+  -- misc
+  use { "lewis6991/gitsigns.nvim", requires = { "nvim-lua/plenary.nvim" } }
+  use { "terrortylor/nvim-comment" }
+  use { "windwp/nvim-autopairs" }
+  use { "lukas-reineke/indent-blankline.nvim" }
+  use { "pocco81/truezen.nvim" }
+  -- use { "akinsho/toggleterm.nvim" }
+
 end)
 
 -- ┏━┓┳━┓┏┓┓o┏━┓┏┓┓┓━┓
@@ -116,7 +128,7 @@ end
 
 function navi(wincmd, direction)
 
-  previous_winnr = vim.fn.winnr()
+  local previous_winnr = vim.fn.winnr()
   vim.cmd("wincmd " .. wincmd)
 
   if previous_winnr == vim.fn.winnr() then
@@ -170,6 +182,7 @@ map("n", "<C-j>", ":lua navi('j', 'south')<CR>", { silent = true })
 map("v", "<", "<gv", opt)
 map("v", ">", ">gv", opt)
 
+-- TODO figure this out.
 map("n", "<Leader>x", ":lua require('core.utils').close_buffer()<CR>", { silent = true }) -- close  buffer
 
 -- Turn off search matches with double-<Esc>
@@ -237,6 +250,12 @@ require('colorizer').setup()
 -- gcc yo
 require('nvim_comment').setup()
 
+-- TODO this is annoying - figure out how to use it properly.
+require('nvim-autopairs').setup({
+  disable_filetype = { "TelescopePrompt" , "vim" },
+  enable_check_bracket_line = false
+})
+
 -- require('toggleterm').setup{
 --   -- size can be a number or function which is passed the current terminal
 --   open_mapping = [[<leader>t]],
@@ -266,15 +285,18 @@ require('nvim_comment').setup()
 --   },
 -- }
 
--- gitsigns
 require('gitsigns').setup {
-  signs = {
-    add = { hl = 'GitGutterAdd', text = '+' },
-    change = { hl = 'GitGutterChange', text = '~' },
-    delete = { hl = 'GitGutterDelete', text = '_' },
-    topdelete = { hl = 'GitGutterDelete', text = '‾' },
-    changedelete = { hl = 'GitGutterChange', text = '~' },
+   signs = {
+    add          = {hl = 'GitSignsAdd'   , text = '│', numhl='GitSignsAddNr'   , linehl='GitSignsAddLn'},
+    change       = {hl = 'GitSignsChange', text = '│', numhl='GitSignsChangeNr', linehl='GitSignsChangeLn'},
+    delete       = {hl = 'GitSignsDelete', text = '_', numhl='GitSignsDeleteNr', linehl='GitSignsDeleteLn'},
+    topdelete    = {hl = 'GitSignsDelete', text = '‾', numhl='GitSignsDeleteNr', linehl='GitSignsDeleteLn'},
+    changedelete = {hl = 'GitSignsChange', text = '~', numhl='GitSignsChangeNr', linehl='GitSignsChangeLn'},
   },
+   status_formatter = nil, -- Use default
+   watch_gitdir = {
+      interval = 100,
+   },
 }
 
 -- telescope
@@ -303,7 +325,6 @@ require('telescope').setup {
         override_generic_sorter = true, -- override the generic sorter
         override_file_sorter = true, -- override the file sorter
         case_mode = "smart_case" -- or "ignore_case" or "respect_case"
-        -- the default case_mode is "smart_case"
     },
   },
 }
@@ -325,6 +346,10 @@ require('nvim-treesitter.configs').setup {
   indent = {
     enable = true,
   },
+  highlight = {
+    enable = true,
+    additional_vim_regex_highlighting = false,
+  },
 }
 
 -- ┳  ┓━┓┳━┓      ┳━┓┏━┓  o  ┏┓┓┳━┓┳━┓┳━┓  ┏┓┓┳ ┳o┓━┓  ┳━┓┳━┓┳━┓┳  ┳  ┓ ┳┏━┓
@@ -332,9 +357,25 @@ require('nvim-treesitter.configs').setup {
 -- ┇━┛━━┛┇        ┇━┛┛━┛  ┇  ┇┗┛┻━┛┻━┛┇━┛   ┇ ┇ ┻┇━━┛  ┇┗┛┻━┛┛ ┇┇━┛┇━┛ ┇  o
 
 
-lspconfig = require("lspconfig")
+local lspconfig = require("lspconfig")
 
-lspinstall = require("lspinstall")
+-- require'lspconfig'.tailwindcss.setup{
+--   settings = {
+--     tailwindCSS = {
+--       lint = {
+--        cssConflict = "warning",
+--        invalidApply = "error",
+--        invalidConfigPath = "error",
+--        invalidScreen = "error",
+--        invalidTailwindDirective = "error",
+--        invalidVariant = "error",
+--        recommendedVariantOrder = "warning"
+--      }
+--     }
+--   }
+-- }
+
+local lspinstall = require("lspinstall")
 
 local function on_attach(client, bufnr)
     vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
@@ -377,8 +418,6 @@ local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
 
--- lspInstall + lspconfig stuff
-
 local function setup_servers()
     lspinstall.setup()
     local servers = lspinstall.installed_servers()
@@ -418,34 +457,33 @@ end
 
 setup_servers()
 
+-- require'lspconfig'.cssls.setup{}
+
 -- Automatically reload after `:LspInstall <server>` so we don't have to restart neovim
 lspinstall.post_install_hook = function()
     setup_servers() -- reload installed servers
     vim.cmd("bufdo e") -- triggers FileType autocmd that starts the server
 end
 
--- replace the default lsp diagnostic symbols
-function lspSymbol(name, icon)
-    vim.fn.sign_define("LspDiagnosticsSign" .. name, {text = icon, numhl = "LspDiagnosticsDefaul" .. name})
+local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
+
+for type, icon in pairs(signs) do
+  local hl = "DiagnosticSign" .. type
+  vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
 end
 
-lspSymbol("Error", "")
-lspSymbol("Warning", "")
-lspSymbol("Information", "")
-lspSymbol("Hint", "")
-
-vim.lsp.handlers["textDocument/publishDiagnostics"] =
-    vim.lsp.with(
-    vim.lsp.diagnostic.on_publish_diagnostics,
-    {
-        virtual_text = {
-            prefix = "",
-            spacing = 0
-        },
-        signs = true,
-        underline = true
-    }
-)
+-- vim.lsp.handlers["textDocument/publishDiagnostics"] =
+--     vim.lsp.with(
+--     vim.lsp.diagnostic.on_publish_diagnostics,
+--     {
+--         virtual_text = {
+--             prefix = "",
+--             spacing = 0
+--         },
+--         signs = true,
+--         underline = true
+--     }
+-- )
 
 -- Set completeopt to have a better completion experience
 vim.o.completeopt = 'menuone,noselect'
@@ -546,6 +584,18 @@ cmp.setup {
       -- { name = "path" },
    },
 }
+
+-- you need setup cmp first put this after cmp.setup()
+require("nvim-autopairs.completion.cmp").setup({
+  map_cr = true, --  map <CR> on insert mode
+  map_complete = true, -- it will auto insert `(` (map_char) after select function or method item
+  auto_select = true, -- automatically select the first item
+  insert = false, -- use insert confirm behavior instead of replace
+  map_char = { -- modifies the function or method delimiter by filetypes
+    all = '(',
+    tex = '{'
+  }
+})
 
 -- ┳━┓┳ ┓┏┓┓┏━┓┏━┓┏━┓┏┏┓┏┏┓┳━┓┏┓┓┳━┓┓━┓
 -- ┃━┫┃ ┃ ┃ ┃ ┃┃  ┃ ┃┃┃┃┃┃┃┃━┫┃┃┃┃ ┃┗━┓
