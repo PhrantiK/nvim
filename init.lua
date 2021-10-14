@@ -32,6 +32,7 @@ require("packer").startup(function()
   use { "saadparwaiz1/cmp_luasnip" } -- Snippets source for nvim-cmp
   use { "onsails/lspkind-nvim" } -- Snippets source for nvim-cmp
   use { "L3MON4D3/LuaSnip" } -- Snippets plugin
+  use { "sakhnik/nvim-gdb", run = ":!./install.sh" }
 
   -- filetype plugins
   use {"amadeus/vim-mjml", ft = {"mjml"}}
@@ -43,12 +44,13 @@ require("packer").startup(function()
   use { "Iron-E/nvim-typora", ft = {"markdown"}}
 
   -- colors & ui!
-  use { "shadmansaleh/lualine.nvim", requires = {"kyazdani42/nvim-web-devicons"} }
+  use { "windwp/windline.nvim", requires = {"kyazdani42/nvim-web-devicons"} }
   use { "norcalli/nvim-colorizer.lua" }
   use { "NTBBloodbath/doom-one.nvim" }
   -- use { "folke/tokyonight.nvim" }
   -- use { "rafamadriz/neon" }
   -- use { "rafamadriz/themes.nvim" }
+  -- use { "shadmansaleh/lualine.nvim", requires = {"kyazdani42/nvim-web-devicons"} }
 
   -- misc
   use { "lewis6991/gitsigns.nvim", requires = { "nvim-lua/plenary.nvim" } }
@@ -246,7 +248,8 @@ require("true-zen").setup {
 }
 
 -- lualine - stop yak shaving and use a fucking default.
-require('lualine').setup()
+-- require('lualine').setup()
+require('wlsample.evil_line')
 
 -- pretty pretty pretty good
 require('colorizer').setup()
