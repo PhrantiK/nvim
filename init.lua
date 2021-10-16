@@ -363,6 +363,13 @@ require('nvim-treesitter.configs').setup {
 -- ┃  ┗━┓┃━┛  ━━  ┃ ┃┃ ┃  ┃  ┃┃┃┣━ ┣━ ┃ ┃   ┃ ┃━┫┃┗━┓  ┃┳┛┣━ ┃━┫┃  ┃  ┗┏┛ ┏┛
 -- ┇━┛━━┛┇        ┇━┛┛━┛  ┇  ┇┗┛┻━┛┻━┛┇━┛   ┇ ┇ ┻┇━━┛  ┇┗┛┻━┛┛ ┇┇━┛┇━┛ ┇  o
 
+local signs = { Error = " ", Warning = " ", Hint = " ", Information = " " }
+
+for type, icon in pairs(signs) do
+  local hl = "LspDiagnosticsSign" .. type
+  vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
+end
+
 local lsp_installer = require("nvim-lsp-installer")
 
 local capabilities = vim.lsp.protocol.make_client_capabilities()
@@ -411,18 +418,18 @@ lsp_installer.on_server_ready(function(server)
         opts.Lua = {
             diagnostics = {
                 globals = {"vim", "hs", "spoon"}
-            },
-            workspace = {
-                library = {
-                    [vim.fn.expand("$VIMRUNTIME/lua")] = true,
-                    [vim.fn.expand("$VIMRUNTIME/lua/vim/lsp")] = true
-                },
-                maxPreload = 100000,
-                preloadFileSize = 10000
-            },
-            telemetry = {
-                enable = false
             }
+        --     workspace = {
+        --         library = {
+        --             [vim.fn.expand("$VIMRUNTIME/lua")] = true,
+        --             [vim.fn.expand("$VIMRUNTIME/lua/vim/lsp")] = true
+        --         },
+        --         maxPreload = 100000,
+        --         preloadFileSize = 10000
+        --     },
+        --     telemetry = {
+        --         enable = false
+        --     }
         }
     end
     opts.capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
