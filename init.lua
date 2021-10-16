@@ -26,13 +26,13 @@ require("packer").startup(function()
   -- lsp crap
   use { "nvim-treesitter/nvim-treesitter" }
   use { "neovim/nvim-lspconfig" }
-  use { "kabouzeid/nvim-lspinstall" }
+  use { "williamboman/nvim-lsp-installer" }
   use { "hrsh7th/nvim-cmp" } -- Autocompletion plugin
   use { "hrsh7th/cmp-nvim-lsp" } -- LSP source for nvim-cmp
   use { "saadparwaiz1/cmp_luasnip" } -- Snippets source for nvim-cmp
   use { "onsails/lspkind-nvim" } -- Snippets source for nvim-cmp
   use { "L3MON4D3/LuaSnip" } -- Snippets plugin
-  use { "sakhnik/nvim-gdb", run = ":!./install.sh" }
+  -- use { "sakhnik/nvim-gdb", run = ":!./install.sh" }
 
   -- filetype plugins
   use {"amadeus/vim-mjml", ft = {"mjml"}}
@@ -44,13 +44,14 @@ require("packer").startup(function()
   use { "Iron-E/nvim-typora", ft = {"markdown"}}
 
   -- colors & ui!
-  use { "windwp/windline.nvim", requires = {"kyazdani42/nvim-web-devicons"} }
+  -- use { "windwp/windline.nvim", requires = {"kyazdani42/nvim-web-devicons"} }
   use { "norcalli/nvim-colorizer.lua" }
   use { "NTBBloodbath/doom-one.nvim" }
   -- use { "folke/tokyonight.nvim" }
   -- use { "rafamadriz/neon" }
   -- use { "rafamadriz/themes.nvim" }
-  -- use { "shadmansaleh/lualine.nvim", requires = {"kyazdani42/nvim-web-devicons"} }
+  use { "shadmansaleh/lualine.nvim", requires = {"kyazdani42/nvim-web-devicons"} }
+  use { "folke/todo-comments.nvim" }
 
   -- misc
   use { "lewis6991/gitsigns.nvim", requires = { "nvim-lua/plenary.nvim" } }
@@ -127,7 +128,7 @@ end
 -- ┣━ ┃ ┃┃┃┃┃   ┃ ┃┃ ┃┃┃┃┗━┓
 -- ┇  ┇━┛┇┗┛┗━┛ ┇ ┇┛━┛┇┗┛━━┛
 
-function navi(wincmd, direction)
+local function navi(wincmd, direction)
 
   local previous_winnr = vim.fn.winnr()
   vim.cmd("wincmd " .. wincmd)
@@ -137,7 +138,7 @@ function navi(wincmd, direction)
   end
 end
 
-function map(mode, lhs, rhs, opts)
+local function map(mode, lhs, rhs, opts)
     local options = {noremap = true}
     if opts then
         options = vim.tbl_extend("force", options, opts)
@@ -167,6 +168,7 @@ map("n", "<Leader>fw", ":Telescope live_grep<CR>", opt)
 map("n", "<Leader><space>", ":Telescope buffers<CR>", opt)
 map("n", "<Leader>fh", ":Telescope help_tags<CR>", opt)
 map("n", "<Leader>fo", ":Telescope oldfiles<CR>", opt)
+map("n", "<Leader>tt", ":TodoTelescope<CR>", opt)
 
 -- Oh, those comment headers look nice.
 map("n", "<Leader>c", ":.!toilet -f rustofat<CR>:norm gc2j<CR>", opt)
@@ -248,23 +250,23 @@ require("true-zen").setup {
 }
 
 -- lualine - stop yak shaving and use a fucking default.
--- require('lualine').setup()
-require('wlsample.evil_line')
+require('lualine').setup()
+-- require('wlsample.evil_line')
 
 -- pretty pretty pretty good
 require('colorizer').setup()
 
 -- gcc yo
 require('nvim_comment').setup()
+require("todo-comments").setup()
 
--- TODO this is annoying - figure out how to use it properly.
+-- TODO: this is annoying - figure out how to use it properly.
 require('nvim-autopairs').setup({
   disable_filetype = { "TelescopePrompt" , "vim" },
   enable_check_bracket_line = false
 })
 
 require('toggleterm').setup{
-  -- size can be a number or function which is passed the current terminal
   open_mapping = [[<leader>t]],
   hide_numbers = true, -- hide the number column in toggleterm buffers
   shade_filetypes = {},
@@ -275,12 +277,7 @@ require('toggleterm').setup{
   persist_size = true,
   direction = 'float',
   close_on_exit = true, -- close the terminal window when the process exits
-  -- This field is only relevant if direction is set to 'float'
   float_opts = {
-    -- The border key is *almost* the same as 'nvim_open_win'
-    -- see :h nvim_open_win for details on borders however
-    -- the 'curved' border is a custom border type
-    -- not natively supported but implemented in this plugin.
     border = 'curved',
     width = 100,
     height = 30,
@@ -369,28 +366,13 @@ require('nvim-treesitter.configs').setup {
 -- ┃  ┗━┓┃━┛  ━━  ┃ ┃┃ ┃  ┃  ┃┃┃┣━ ┣━ ┃ ┃   ┃ ┃━┫┃┗━┓  ┃┳┛┣━ ┃━┫┃  ┃  ┗┏┛ ┏┛
 -- ┇━┛━━┛┇        ┇━┛┛━┛  ┇  ┇┗┛┻━┛┻━┛┇━┛   ┇ ┇ ┻┇━━┛  ┇┗┛┻━┛┛ ┇┇━┛┇━┛ ┇  o
 
+local lsp_installer = require("nvim-lsp-installer")
 
-local lspconfig = require("lspconfig")
+local capabilities = vim.lsp.protocol.make_client_capabilities()
+capabilities.textDocument.completion.completionItem.snippetSupport = true
+capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
 
--- require'lspconfig'.tailwindcss.setup{
---   settings = {
---     tailwindCSS = {
---       lint = {
---        cssConflict = "warning",
---        invalidApply = "error",
---        invalidConfigPath = "error",
---        invalidScreen = "error",
---        invalidTailwindDirective = "error",
---        invalidVariant = "error",
---        recommendedVariantOrder = "warning"
---      }
---     }
---   }
--- }
-
-local lspinstall = require("lspinstall")
-
-local function on_attach(client, bufnr)
+local function common_on_attach(client, bufnr)
     vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
 
     local opts = {noremap = true, silent = true}
@@ -398,8 +380,6 @@ local function on_attach(client, bufnr)
     local function buf_set_keymap(...)
         vim.api.nvim_buf_set_keymap(bufnr, ...)
     end
-
-    -- Mappings.
 
     buf_set_keymap("n", "gD", "<Cmd>lua vim.lsp.buf.declaration()<CR>", opts)
     buf_set_keymap("n", "gd", "<Cmd>lua vim.lsp.buf.definition()<CR>", opts)
@@ -425,101 +405,41 @@ local function on_attach(client, bufnr)
     end
 end
 
--- require("plugins.beancount")
-
-local capabilities = vim.lsp.protocol.make_client_capabilities()
-capabilities.textDocument.completion.completionItem.snippetSupport = true
-capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
-
-local function setup_servers()
-    lspinstall.setup()
-    local servers = lspinstall.installed_servers()
-
-    for _, lang in pairs(servers) do
-        if lang ~= "lua" then
-            lspconfig[lang].setup {
-                on_attach = on_attach,
-                capabilities = capabilities,
-                root_dir = vim.loop.cwd
+lsp_installer.on_server_ready(function(server)
+    local opts = {
+      on_attach = common_on_attach,
+  }
+  -- FIXME: this doesn't bloody work.
+    if server.name == "sumneko_lua" then
+        opts.Lua = {
+            diagnostics = {
+                globals = {"vim", "hs", "spoon"}
+            },
+            workspace = {
+                library = {
+                    [vim.fn.expand("$VIMRUNTIME/lua")] = true,
+                    [vim.fn.expand("$VIMRUNTIME/lua/vim/lsp")] = true
+                },
+                maxPreload = 100000,
+                preloadFileSize = 10000
+            },
+            telemetry = {
+                enable = false
             }
-        elseif lang == "lua" then
-            lspconfig[lang].setup {
-                root_dir = vim.loop.cwd,
-                settings = {
-                    Lua = {
-                        diagnostics = {
-                            globals = {"vim", "hs", "spoon"}
-                        },
-                        workspace = {
-                            library = {
-                                [vim.fn.expand("$VIMRUNTIME/lua")] = true,
-                                [vim.fn.expand("$VIMRUNTIME/lua/vim/lsp")] = true
-                            },
-                            maxPreload = 100000,
-                            preloadFileSize = 10000
-                        },
-                        telemetry = {
-                            enable = false
-                        }
-                    }
-                }
-            }
-        end
+        }
     end
-end
-
-setup_servers()
-
--- require'lspconfig'.cssls.setup{}
-
--- Automatically reload after `:LspInstall <server>` so we don't have to restart neovim
-lspinstall.post_install_hook = function()
-    setup_servers() -- reload installed servers
-    vim.cmd("bufdo e") -- triggers FileType autocmd that starts the server
-end
-
-local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
-
-for type, icon in pairs(signs) do
-  local hl = "DiagnosticSign" .. type
-  vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
-end
+    opts.capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
+    server:setup(opts)
+    vim.cmd [[ do User LspAttachBuffers ]]
+end)
 
 -- Set completeopt to have a better completion experience
 vim.o.completeopt = 'menuone,noselect'
 
 -- luasnip setup
 -- local luasnip = require('luasnip')
-
+local lspkind = require('lspkind')
 local cmp = require('cmp')
-
-local lspicons = {
-   Text = "",
-   Method = "",
-   Function = "",
-   Constructor = "",
-   Field = "ﰠ",
-   Variable = "",
-   Class = "ﴯ",
-   Interface = "",
-   Module = "",
-   Property = "ﰠ",
-   Unit = "塞",
-   Value = "",
-   Enum = "",
-   Keyword = "",
-   Snippet = "",
-   Color = "",
-   File = "",
-   Reference = "",
-   Folder = "",
-   EnumMember = "",
-   Constant = "",
-   Struct = "פּ",
-   Event = "",
-   Operator = "",
-   TypeParameter = "",
-}
 
 -- nvim-cmp setup
 cmp.setup {
@@ -529,24 +449,9 @@ cmp.setup {
       end,
    },
    formatting = {
-      format = function(entry, vim_item)
-         -- load lspkind icons
-         vim_item.kind = string.format(
-            "%s %s",
-            lspicons[vim_item.kind],
-            vim_item.kind
-         )
-
-         vim_item.menu = ({
-            nvim_lsp = "[LSP]",
-            nvim_lua = "[Lua]",
-            buffer = "[BUF]",
-         })[entry.source.name]
-
-         return vim_item
-      end,
-   },
-   mapping = {
+    format = lspkind.cmp_format({with_text = false, maxwidth = 50})
+  },
+  mapping = {
       ["<C-k>"] = cmp.mapping.select_prev_item(),
       ["<C-j>"] = cmp.mapping.select_next_item(),
       ["<C-d>"] = cmp.mapping.scroll_docs(-4),
@@ -579,7 +484,7 @@ cmp.setup {
    sources = {
       { name = "nvim_lsp" },
       { name = "luasnip" },
-      -- { name = "buffer" },
+      { name = "buffer" },
       { name = "nvim_lua" },
       -- { name = "path" },
    },
@@ -617,6 +522,7 @@ vim.api.nvim_exec([[
   augroup end
 ]], false)
 
+-- spelchek
 vim.api.nvim_exec([[
   augroup SpellCheck
     autocmd!
@@ -624,10 +530,10 @@ vim.api.nvim_exec([[
   augroup end
 ]], false)
 
+-- Pack it up, pack it in.
 vim.api.nvim_exec( [[
   augroup Packer
     autocmd!
     autocmd BufWritePost init.lua PackerCompile
   augroup end
 ]], false)
-
