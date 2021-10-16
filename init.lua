@@ -32,7 +32,6 @@ require("packer").startup(function()
   use { "saadparwaiz1/cmp_luasnip" } -- Snippets source for nvim-cmp
   use { "onsails/lspkind-nvim" } -- Snippets source for nvim-cmp
   use { "L3MON4D3/LuaSnip" } -- Snippets plugin
-  -- use { "sakhnik/nvim-gdb", run = ":!./install.sh" }
 
   -- filetype plugins
   use {"amadeus/vim-mjml", ft = {"mjml"}}
@@ -44,18 +43,16 @@ require("packer").startup(function()
   use { "Iron-E/nvim-typora", ft = {"markdown"}}
 
   -- colors & ui!
-  -- use { "windwp/windline.nvim", requires = {"kyazdani42/nvim-web-devicons"} }
   use { "norcalli/nvim-colorizer.lua" }
   use { "NTBBloodbath/doom-one.nvim" }
   -- use { "folke/tokyonight.nvim" }
-  -- use { "rafamadriz/neon" }
-  -- use { "rafamadriz/themes.nvim" }
   use { "shadmansaleh/lualine.nvim", requires = {"kyazdani42/nvim-web-devicons"} }
-  use { "folke/todo-comments.nvim" }
+  -- use { "windwp/windline.nvim", requires = {"kyazdani42/nvim-web-devicons"} }
 
   -- misc
   use { "lewis6991/gitsigns.nvim", requires = { "nvim-lua/plenary.nvim" } }
   use { "terrortylor/nvim-comment" }
+  use { "folke/todo-comments.nvim" }
   use { "windwp/nvim-autopairs" }
   use { "lukas-reineke/indent-blankline.nvim" }
   use { "pocco81/truezen.nvim" }
