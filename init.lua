@@ -379,11 +379,11 @@ for type, icon in pairs(signs) do
   vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
 end
 
-local lsp_installer = require("nvim-lsp-installer")
-
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true
-capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
+
+-- NOTE: Do I need this?:
+-- capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
 
 local function common_on_attach(client, bufnr)
     vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
@@ -418,10 +418,35 @@ local function common_on_attach(client, bufnr)
     end
 end
 
+local lsp_installer = require("nvim-lsp-installer")
+
 lsp_installer.on_server_ready(function(server)
     local opts = {
       on_attach = common_on_attach,
-  }
+      flags = {
+        debounce_text_changes = 150,
+      },
+    }
+    if server.name == "sumneko_lua" then
+      opts.settings = {
+          Lua = {
+              diagnostics = {
+                  globals = {"vim", "hs", "spoon"}
+              },
+              workspace = {
+                  library = {
+                      [vim.fn.expand("$VIMRUNTIME/lua")] = true,
+                      [vim.fn.expand("$VIMRUNTIME/lua/vim/lsp")] = true
+                  },
+                  maxPreload = 100000,
+                  preloadFileSize = 10000
+              },
+              telemetry = {
+                  enable = false
+              }
+          }
+    }
+    end
     opts.capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
     server:setup(opts)
     vim.cmd [[ do User LspAttachBuffers ]]
