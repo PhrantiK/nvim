@@ -363,10 +363,19 @@ require('nvim-treesitter.configs').setup {
 -- ┃  ┗━┓┃━┛  ━━  ┃ ┃┃ ┃  ┃  ┃┃┃┣━ ┣━ ┃ ┃   ┃ ┃━┫┃┗━┓  ┃┳┛┣━ ┃━┫┃  ┃  ┗┏┛ ┏┛
 -- ┇━┛━━┛┇        ┇━┛┛━┛  ┇  ┇┗┛┻━┛┻━┛┇━┛   ┇ ┇ ┻┇━━┛  ┇┗┛┻━┛┛ ┇┇━┛┇━┛ ┇  o
 
-local signs = { Error = " ", Warning = " ", Hint = " ", Information = " " }
+-- local signs = { Error = " ", Warning = " ", Hint = " ", Information = " " }
+--
+-- for type, icon in pairs(signs) do
+--   local hl = "LspDiagnosticsSign" .. type
+--   vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
+-- end
+
+-- NOTE: Below is for neovim 0.6+
+
+local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
 
 for type, icon in pairs(signs) do
-  local hl = "LspDiagnosticsSign" .. type
+  local hl = "DiagnosticSign" .. type
   vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
 end
 
@@ -413,25 +422,6 @@ lsp_installer.on_server_ready(function(server)
     local opts = {
       on_attach = common_on_attach,
   }
-  -- FIXME: this doesn't bloody work.
-    if server.name == "sumneko_lua" then
-        opts.Lua = {
-            diagnostics = {
-                globals = {"vim", "hs", "spoon"}
-            }
-        --     workspace = {
-        --         library = {
-        --             [vim.fn.expand("$VIMRUNTIME/lua")] = true,
-        --             [vim.fn.expand("$VIMRUNTIME/lua/vim/lsp")] = true
-        --         },
-        --         maxPreload = 100000,
-        --         preloadFileSize = 10000
-        --     },
-        --     telemetry = {
-        --         enable = false
-        --     }
-        }
-    end
     opts.capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
     server:setup(opts)
     vim.cmd [[ do User LspAttachBuffers ]]
