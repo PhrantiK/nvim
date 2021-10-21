@@ -125,7 +125,7 @@ end
 -- ┣━ ┃ ┃┃┃┃┃   ┃ ┃┃ ┃┃┃┃┗━┓
 -- ┇  ┇━┛┇┗┛┗━┛ ┇ ┇┛━┛┇┗┛━━┛
 
-local function navi(wincmd, direction)
+function navi(wincmd, direction)
 
   local previous_winnr = vim.fn.winnr()
   vim.cmd("wincmd " .. wincmd)
@@ -135,7 +135,7 @@ local function navi(wincmd, direction)
   end
 end
 
-local function map(mode, lhs, rhs, opts)
+function map(mode, lhs, rhs, opts)
     local options = {noremap = true}
     if opts then
         options = vim.tbl_extend("force", options, opts)
@@ -431,7 +431,9 @@ lsp_installer.on_server_ready(function(server)
       opts.settings = {
           Lua = {
               diagnostics = {
-                  globals = {"vim", "hs", "spoon"}
+                  enable = true,
+                  globals = {"vim", "hs", "spoon"},
+                  disable = { "lowercase-global"}
               },
               workspace = {
                   library = {
