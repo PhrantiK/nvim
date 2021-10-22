@@ -301,6 +301,7 @@ require('gitsigns').setup {
 }
 
 -- telescope
+-- TODO: Fix the binding for CTRL-V splits
 require('telescope').setup {
   defaults = {
     mappings = {
