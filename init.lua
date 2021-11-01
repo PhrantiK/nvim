@@ -125,6 +125,14 @@ end
 -- ┣━ ┃ ┃┃┃┃┃   ┃ ┃┃ ┃┃┃┃┗━┓
 -- ┇  ┇━┛┇┗┛┗━┛ ┇ ┇┛━┛┇┗┛━━┛
 
+function trim_trailing_whitespaces()
+    if not vim.o.binary and vim.o.filetype ~= 'diff' then
+        local current_view = vim.fn.winsaveview()
+        vim.cmd([[keeppatterns %s/\s\+$//e]])
+        vim.fn.winrestview(current_view)
+    end
+end
+
 function navi(wincmd, direction)
 
   local previous_winnr = vim.fn.winnr()
@@ -505,12 +513,13 @@ cmp.setup {
 -- ┃━┫┃ ┃ ┃ ┃ ┃┃  ┃ ┃┃┃┃┃┃┃┃━┫┃┃┃┃ ┃┗━┓
 -- ┛ ┇┇━┛ ┇ ┛━┛┗━┛┛━┛┛ ┇┛ ┇┛ ┇┇┗┛┇━┛━━┛
 
+
 -- annoying spaces begone
 vim.api.nvim_exec([[
-  augroup TrailingSpaces
-    autocmd!
-    autocmd BufWritePre * :%s/\s\+$//e
-  augroup end
+augroup TrimTrailingWhitespaces
+    au!
+    au BufWritePre * :lua trim_trailing_whitespaces()
+augroup END
 ]], false)
 
 -- Highlight on wank
