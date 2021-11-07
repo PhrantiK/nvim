@@ -57,6 +57,10 @@ require("packer").startup(function()
   use { "lukas-reineke/indent-blankline.nvim" }
   use { "pocco81/truezen.nvim" }
   use { "akinsho/toggleterm.nvim" }
+
+  -- the need for speed
+  use { "lewis6991/impatient.nvim" }
+  use { "nathom/filetype.nvim" }
 end)
 
 -- ┏━┓┳━┓┏┓┓o┏━┓┏┓┓┓━┓
@@ -254,6 +258,8 @@ require("true-zen").setup {
   },
 }
 
+require('impatient')
+
 -- lualine - stop yak shaving and use a fucking default.
 require('lualine').setup()
 -- require('wlsample.evil_line')
@@ -303,7 +309,6 @@ require('gitsigns').setup {
 }
 
 -- telescope
--- TODO: Fix the binding for CTRL-V splits
 require('telescope').setup {
   defaults = {
     mappings = {
@@ -365,15 +370,6 @@ require('nvim-treesitter.configs').setup {
 -- ┳  ┓━┓┳━┓      ┳━┓┏━┓  o  ┏┓┓┳━┓┳━┓┳━┓  ┏┓┓┳ ┳o┓━┓  ┳━┓┳━┓┳━┓┳  ┳  ┓ ┳┏━┓
 -- ┃  ┗━┓┃━┛  ━━  ┃ ┃┃ ┃  ┃  ┃┃┃┣━ ┣━ ┃ ┃   ┃ ┃━┫┃┗━┓  ┃┳┛┣━ ┃━┫┃  ┃  ┗┏┛ ┏┛
 -- ┇━┛━━┛┇        ┇━┛┛━┛  ┇  ┇┗┛┻━┛┻━┛┇━┛   ┇ ┇ ┻┇━━┛  ┇┗┛┻━┛┛ ┇┇━┛┇━┛ ┇  o
-
--- local signs = { Error = " ", Warning = " ", Hint = " ", Information = " " }
---
--- for type, icon in pairs(signs) do
---   local hl = "LspDiagnosticsSign" .. type
---   vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
--- end
-
--- NOTE: Below is for neovim 0.6+
 
 local signs = { Error = " ", Warn = " ", Hint = " ", Info = " " }
 
