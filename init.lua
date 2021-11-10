@@ -2,6 +2,9 @@
 -- ┃ ┃┃ ┃  ┗━┓┃ ┃┃┃┃┣━   ┃┃┃┃ ┃┃┳┛┣┻┓
 -- ┇━┛┛━┛  ━━┛┛━┛┛ ┇┻━┛  ┗┻┇┛━┛┇┗┛┇ ┛
 
+-- TODO: figure out how to set up LSP for c files
+-- TODO: implement folds
+
 local opt = vim.opt
 local g = vim.g
 
@@ -60,7 +63,7 @@ require("packer").startup(function()
 
   -- the need for speed
   use { "lewis6991/impatient.nvim" }
-  use { "nathom/filetype.nvim" }
+  -- use { "nathom/filetype.nvim" }
 end)
 
 -- ┏━┓┳━┓┏┓┓o┏━┓┏┓┓┓━┓
@@ -138,7 +141,6 @@ function trim_trailing_whitespaces()
 end
 
 function navi(wincmd, direction)
-
   local previous_winnr = vim.fn.winnr()
   vim.cmd("wincmd " .. wincmd)
 
@@ -171,7 +173,7 @@ map("n", "<Leader>cm", ":Telescope git_commits <CR>", opt)
 map("n", "<Leader>ff", ":Telescope find_files <CR>", opt)
 map("n", "<Leader>fb", ":Telescope current_buffer_fuzzy_find <CR>", opt)
 map("n", "<Leader>th", ":Telescope colorscheme <CR>", opt)
-map("n", "<Leader>fd", ":Telescope find_files --hidden <CR>", opt)
+map("n", "<Leader>fd", ":Telescope find_files find_command=fd,--hidden <CR>", opt)
 map("n", "<Leader>cd", ":Telescope zoxide list <CR>", opt)
 map("n", "<Leader>fw", ":Telescope live_grep<CR>", opt)
 map("n", "<Leader><space>", ":Telescope buffers<CR>", opt)
@@ -181,6 +183,9 @@ map("n", "<Leader>tt", ":TodoTelescope<CR>", opt)
 
 -- Oh, those comment headers look nice.
 map("n", "<Leader>c", ":.!toilet -f rustofat<CR>:norm gc2j<CR>", opt)
+
+-- toggle buffer
+map("n", "<Tab>", ":b#<CR>", opt)
 
 -- Exit terminal with esc
 map("t", "<Esc>", "<C-\\><C-n>", opt)
@@ -311,6 +316,16 @@ require('gitsigns').setup {
 -- telescope
 require('telescope').setup {
   defaults = {
+    vimgrep_arguments = {
+      'rg',
+      '--color=never',
+      '--no-heading',
+      '--with-filename',
+      '--line-number',
+      '--column',
+      '--smart-case'
+    },
+    file_ignore_patterns = { "^.git/" },
     mappings = {
       i = {
         ["<C-j>"] = "move_selection_next",
