@@ -405,9 +405,9 @@ local function common_on_attach(client, bufnr)
         vim.api.nvim_buf_set_keymap(bufnr, ...)
     end
 
-    buf_set_keymap("n", "gD", "<Cmd>lua vim.lsp.buf.declaration()<CR>", opts)
-    buf_set_keymap("n", "gd", "<Cmd>lua vim.lsp.buf.definition()<CR>", opts)
-    buf_set_keymap("n", "K", "<Cmd>lua vim.lsp.buf.hover()<CR>", opts)
+    buf_set_keymap("n", "gD", "<cmd>lua vim.lsp.buf.declaration()<CR>", opts)
+    buf_set_keymap("n", "gd", "<cmd>lua vim.lsp.buf.definition()<CR>", opts)
+    buf_set_keymap("n", "K", "<cmd>lua vim.lsp.buf.hover()<CR>", opts)
     buf_set_keymap("n", "gi", "<cmd>lua vim.lsp.buf.implementation()<CR>", opts)
     buf_set_keymap("n", "<C-k>", "<cmd>lua vim.lsp.buf.signature_help()<CR>", opts)
     buf_set_keymap("n", "<space>wa", "<cmd>lua vim.lsp.buf.add_workspace_folder()<CR>", opts)
@@ -469,13 +469,14 @@ end)
 vim.o.completeopt = 'menuone,noselect'
 
 local lspkind = require('lspkind')
+local luasnip = require('luasnip')
 local cmp = require('cmp')
 
 -- nvim-cmp setup
 cmp.setup {
    snippet = {
       expand = function(args)
-         require("luasnip").lsp_expand(args.body)
+        luasnip.lsp_expand(args.body)
       end,
    },
    formatting = {
@@ -496,16 +497,16 @@ cmp.setup {
         if cmp.visible() then
           cmp.select_next_item()
          elseif require("luasnip").expand_or_jumpable() then
-            vim.fn.feedkeys(vim.api.nvim_replace_termcodes("<Plug>luasnip-expand-or-jump", true, true, true), "")
+            luasnip.expand_or_jump()
          else
             fallback()
          end
       end,
       ["<S-Tab>"] = function(fallback)
-         if vim.fn.pumvisible() == 1 then
-            vim.fn.feedkeys(vim.api.nvim_replace_termcodes("<C-p>", true, true, true), "n")
+        if cmp.visible() then
+            cmp.select_prev_item()
          elseif require("luasnip").jumpable(-1) then
-            vim.fn.feedkeys(vim.api.nvim_replace_termcodes("<Plug>luasnip-jump-prev", true, true, true), "")
+            luasnip.jump(-1)
          else
             fallback()
          end
@@ -526,7 +527,7 @@ cmp.setup {
 
 
 -- annoying spaces begone
-vim.api.nvim_exec([[
+vim.cmd([[
 augroup TrimTrailingWhitespaces
     au!
     au BufWritePre * :lua trim_trailing_whitespaces()
@@ -534,7 +535,7 @@ augroup END
 ]], false)
 
 -- Highlight on wank
-vim.api.nvim_exec([[
+vim.cmd([[
   augroup YankHighlight
     autocmd!
     autocmd TextYankPost * silent! lua vim.highlight.on_yank()
@@ -542,7 +543,7 @@ vim.api.nvim_exec([[
 ]], false)
 
 -- spelchek
-vim.api.nvim_exec([[
+vim.cmd([[
   augroup SpellCheck
     autocmd!
     autocmd BufNewFile,BufRead *.md setlocal spell
@@ -550,7 +551,7 @@ vim.api.nvim_exec([[
 ]], false)
 
 -- Pack it up, pack it in.
-vim.api.nvim_exec( [[
+vim.cmd( [[
   augroup Packer
     autocmd!
     autocmd BufWritePost init.lua PackerCompile
