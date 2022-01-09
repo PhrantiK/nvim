@@ -4,6 +4,7 @@
 
 -- TODO: figure out how to set up LSP for c files
 -- TODO: implement folds
+-- TODO: try: numToStr/Comment.nvim
 
 local opt = vim.opt
 local g = vim.g
