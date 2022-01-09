@@ -48,8 +48,9 @@ require("packer").startup(function()
 
   -- colors & ui!
   use { "norcalli/nvim-colorizer.lua" }
-  use { "NTBBloodbath/doom-one.nvim" }
+  -- use { "NTBBloodbath/doom-one.nvim" }
   -- use { "folke/tokyonight.nvim" }
+  use { "EdenEast/nightfox.nvim" }
   use { "nvim-lualine/lualine.nvim", requires = {"kyazdani42/nvim-web-devicons"} }
   -- use { "windwp/windline.nvim", requires = {"kyazdani42/nvim-web-devicons"} }
 
@@ -61,7 +62,7 @@ require("packer").startup(function()
   use { "lukas-reineke/indent-blankline.nvim" }
   use { "pocco81/truezen.nvim" }
   use { "akinsho/toggleterm.nvim" }
-
+  use { "stevearc/vim-arduino" }
   -- the need for speed
   use { "lewis6991/impatient.nvim" }
   -- use { "nathom/filetype.nvim" }
@@ -234,14 +235,27 @@ map('n', '<leader>O',
 -- ┇  ┇━┛┇━┛┇━┛┇┇┗┛  ━━┛┻━┛ ┇ ┇━┛┇
 
 -- colorscheme
-require('doom-one').setup {
-    cursor_coloring = true,
-    italic_comments = true,
-    plugins_integrations = {
-        gitsigns = true,
-        telescope = true,
-    },
-}
+local nightfox = require('nightfox')
+
+nightfox.setup({
+  fox = "nightfox", -- change the colorscheme to use nordfox
+  styles = {
+    comments = "italic", -- change style of comments to be italic
+    keywords = "bold", -- change style of keywords to be bold
+    -- functions = "italic,bold" -- styles can be a comma separated list
+  },
+})
+
+nightfox.load()
+
+-- require('doom-one').setup {
+--     cursor_coloring = true,
+--     italic_comments = true,
+--     plugins_integrations = {
+--         gitsigns = true,
+--         telescope = true,
+--     },
+-- }
 
 -- blankline
 require("indent_blankline").setup {
