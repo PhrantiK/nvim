@@ -5,6 +5,7 @@
 -- TODO: figure out how to set up LSP for c files
 -- TODO: implement folds
 -- TODO: try: numToStr/Comment.nvim
+-- TODO: try: mhartington/formatter.nvim
 
 local opt = vim.opt
 local g = vim.g
@@ -74,7 +75,6 @@ end)
 
 opt.termguicolors = true
 opt.ruler = false
-opt.hidden = true
 opt.ignorecase = true
 opt.splitbelow = true
 opt.splitright = true
@@ -170,6 +170,7 @@ map('', '<Space>', '<Nop>', { noremap = true, silent = true })
 g.mapleader = ' '
 g.maplocalleader = ' '
 
+-- Telescope bindings
 map("n", "<Leader>gt", ":Telescope git_status <CR>", opt)
 map("n", "<Leader>cm", ":Telescope git_commits <CR>", opt)
 map("n", "<Leader>ff", ":Telescope find_files <CR>", opt)
@@ -412,7 +413,7 @@ local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities.textDocument.completion.completionItem.snippetSupport = true
 
 local function common_on_attach(client, bufnr)
-    vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
+    -- vim.api.nvim_buf_set_option(bufnr, "omnifunc", "v:lua.vim.lsp.omnifunc")
 
     local opts = {noremap = true, silent = true}
 
@@ -431,7 +432,7 @@ local function common_on_attach(client, bufnr)
     buf_set_keymap("n", "<space>D", "<cmd>lua vim.lsp.buf.type_definition()<CR>", opts)
     buf_set_keymap("n", "<space>rn", "<cmd>lua vim.lsp.buf.rename()<CR>", opts)
     buf_set_keymap("n", "gr", "<cmd>lua vim.lsp.buf.references()<CR>", opts)
-    buf_set_keymap("n", "<space>e", "<cmd>lua vim.lsp.diagnostic.show_line_diagnostics()<CR>", opts)
+    buf_set_keymap("n", "<space>e", "<cmd>lua vim.lsp.diagnostic.open_float()<CR>", opts)
     buf_set_keymap("n", "[d", "<cmd>lua vim.lsp.diagnostic.goto_prev()<CR>", opts)
     buf_set_keymap("n", "]d", "<cmd>lua vim.lsp.diagnostic.goto_next()<CR>", opts)
     buf_set_keymap("n", "<space>q", "<cmd>lua vim.lsp.diagnostic.set_loclist()<CR>", opts)
