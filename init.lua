@@ -64,6 +64,7 @@ require("packer").startup(function()
   use { "pocco81/truezen.nvim" }
   use { "akinsho/toggleterm.nvim" }
   use { "stevearc/vim-arduino" }
+  use { "stevearc/dressing.nvim" }
   -- the need for speed
   use { "lewis6991/impatient.nvim" }
   -- use { "nathom/filetype.nvim" }
@@ -159,6 +160,22 @@ function map(mode, lhs, rhs, opts)
     vim.api.nvim_set_keymap(mode, lhs, rhs, options)
 end
 
+local function arduino_status()
+  local ft = vim.api.nvim_buf_get_option(0, "ft")
+  if ft ~= "arduino" then
+    return ""
+  end
+  local port = vim.fn["arduino#GetPort"]()
+  local line = string.format("[%s]", vim.g.arduino_board)
+  if vim.g.arduino_programmer ~= "" then
+    line = line .. string.format(" [%s]", vim.g.arduino_programmer)
+  end
+  if port ~= 0 then
+    line = line .. string.format(" (%s:%s)", port, vim.g.arduino_serial_baud)
+  end
+  return line
+end
+
 -- ┳━┓o┏┓┓┳━┓o┏┓┓┏━┓┓━┓
 -- ┃━┃┃┃┃┃┃ ┃┃┃┃┃┃ ┳┗━┓
 -- ┇━┛┇┇┗┛┇━┛┇┇┗┛┇━┛━━┛
@@ -169,6 +186,13 @@ opt = {}
 map('', '<Space>', '<Nop>', { noremap = true, silent = true })
 g.mapleader = ' '
 g.maplocalleader = ' '
+
+-- Arduino bindings
+map("n", "<leader>am", ":ArduinoVerify<CR>", opt)
+map("n", "<leader>au", ":ArduinoUpload<CR>", opt)
+map("n", "<leader>ad", ":ArduinoUploadAndSerial<CR>", opt)
+map("n", "<leader>ab", ":ArduinoChooseBoard<CR>", opt)
+map("n", "<leader>ap", ":ArduinoChooseProgrammer<CR>", opt)
 
 -- Telescope bindings
 map("n", "<Leader>gt", ":Telescope git_status <CR>", opt)
@@ -454,6 +478,13 @@ lsp_installer.on_server_ready(function(server)
         debounce_text_changes = 150,
       },
     }
+    if server.name == "arduino_language_server" then
+      opts.on_new_config = function (config, root_dir)
+            local partial_cmd = server:get_default_options().cmd
+            local MY_FQBN = "arduino:avr:nano"
+            config.cmd = vim.list_extend(partial_cmd, { "-fqbn", MY_FQBN })
+        end
+    end
     if server.name == "sumneko_lua" then
       opts.settings = {
           Lua = {
