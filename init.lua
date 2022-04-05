@@ -259,19 +259,17 @@ map('n', '<leader>O',
 -- ┃━┛┃  ┃ ┃┃ ┳┃┃┃┃  ┗━┓┣━  ┃ ┃ ┃┃━┛
 -- ┇  ┇━┛┇━┛┇━┛┇┇┗┛  ━━┛┻━┛ ┇ ┇━┛┇
 
--- colorscheme
-local nightfox = require('nightfox')
+vim.cmd("colorscheme nightfox")
 
-nightfox.setup({
-  fox = "nightfox", -- change the colorscheme to use nordfox
+require ('nightfox').setup({
+  options = {
   styles = {
     comments = "italic", -- change style of comments to be italic
     keywords = "bold", -- change style of keywords to be bold
     -- functions = "italic,bold" -- styles can be a comma separated list
   },
+  }
 })
-
-nightfox.load()
 
 -- require('doom-one').setup {
 --     cursor_coloring = true,
