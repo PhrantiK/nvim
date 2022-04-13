@@ -40,6 +40,7 @@ require("packer").startup(function()
 
   -- filetype plugins
   use {"amadeus/vim-mjml", ft = {"mjml"}}
+  use {"Fymyte/mbsync.vim", ft = {"mbsync"}}
   use {"itspriddle/vim-marked", ft = {"markdown"}}
   use {"plasticboy/vim-markdown", ft = {"markdown"}}
   -- use {"polarmutex/beancount.nvim", ft = {"beancount"}}
