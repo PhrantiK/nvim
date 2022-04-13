@@ -49,9 +49,9 @@ require("packer").startup(function()
 
   -- colors & ui!
   use { "norcalli/nvim-colorizer.lua" }
-  -- use { "NTBBloodbath/doom-one.nvim" }
+  use { "NTBBloodbath/doom-one.nvim" }
   -- use { "folke/tokyonight.nvim" }
-  use { "EdenEast/nightfox.nvim" }
+  -- use { "EdenEast/nightfox.nvim" }
   use { "nvim-lualine/lualine.nvim", requires = {"kyazdani42/nvim-web-devicons"} }
   -- use { "windwp/windline.nvim", requires = {"kyazdani42/nvim-web-devicons"} }
 
@@ -259,26 +259,29 @@ map('n', '<leader>O',
 -- ┃━┛┃  ┃ ┃┃ ┳┃┃┃┃  ┗━┓┣━  ┃ ┃ ┃┃━┛
 -- ┇  ┇━┛┇━┛┇━┛┇┇┗┛  ━━┛┻━┛ ┇ ┇━┛┇
 
-vim.cmd("colorscheme nightfox")
+-- colorscheme
 
-require ('nightfox').setup({
-  options = {
-  styles = {
-    comments = "italic", -- change style of comments to be italic
-    keywords = "bold", -- change style of keywords to be bold
-    -- functions = "italic,bold" -- styles can be a comma separated list
-  },
-  }
-})
+-- local nightfox = require('nightfox')
+--
+-- nightfox.setup({
+--   fox = "nightfox", -- change the colorscheme to use nordfox
+--   styles = {
+--     comments = "italic", -- change style of comments to be italic
+--     keywords = "bold", -- change style of keywords to be bold
+--     -- functions = "italic,bold" -- styles can be a comma separated list
+--   },
+-- })
 
--- require('doom-one').setup {
---     cursor_coloring = true,
---     italic_comments = true,
---     plugins_integrations = {
---         gitsigns = true,
---         telescope = true,
---     },
--- }
+-- nightfox.load()
+
+require('doom-one').setup {
+    cursor_coloring = true,
+    italic_comments = true,
+    plugins_integrations = {
+        gitsigns = true,
+        telescope = true,
+    },
+}
 
 -- blankline
 require("indent_blankline").setup {
