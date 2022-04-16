@@ -43,13 +43,15 @@ require("packer").startup(function(use)
 
   -- colors & ui!
   use { "norcalli/nvim-colorizer.lua" }
-  use { "NTBBloodbath/doom-one.nvim" }
+  -- use { "NTBBloodbath/doom-one.nvim" }
+  use { "JoosepAlviste/palenightfall.nvim" }
   -- use { "folke/tokyonight.nvim" }
   -- use { "EdenEast/nightfox.nvim" }
   use { "nvim-lualine/lualine.nvim", requires = { "kyazdani42/nvim-web-devicons" } }
   use { "lewis6991/gitsigns.nvim", requires = { "nvim-lua/plenary.nvim" } }
   use { "lukas-reineke/indent-blankline.nvim" }
   use { "pocco81/truezen.nvim" }
+  use { "rcarriga/nvim-notify" }
 
   -- misc
   use { "terrortylor/nvim-comment" }
@@ -242,14 +244,16 @@ map('n', '<leader>O',
 
 -- nightfox.load()
 
-require('doom-one').setup {
-  cursor_coloring = true,
-  italic_comments = true,
-  plugins_integrations = {
-    gitsigns = true,
-    telescope = true,
-  },
-}
+-- require('doom-one').setup {
+--   cursor_coloring = true,
+--   italic_comments = true,
+--   plugins_integrations = {
+--     gitsigns = true,
+--     telescope = true,
+--   },
+-- }
+
+require("palenightfall").setup()
 
 -- blankline
 require("indent_blankline").setup {
