@@ -3,7 +3,6 @@
 -- ┇━┛┛━┛  ━━┛┛━┛┛ ┇┻━┛  ┗┻┇┛━┛┇┗┛┇ ┛
 
 -- TODO: implement folds
--- TODO: try: numToStr/Comment.nvim
 -- TODO: try: mhartington/formatter.nvim
 
 local opt = vim.opt
@@ -48,15 +47,16 @@ require("packer").startup(function(use)
   -- use { "folke/tokyonight.nvim" }
   -- use { "EdenEast/nightfox.nvim" }
   use { "nvim-lualine/lualine.nvim", requires = { "kyazdani42/nvim-web-devicons" } }
+  use { "lewis6991/gitsigns.nvim", requires = { "nvim-lua/plenary.nvim" } }
+  use { "lukas-reineke/indent-blankline.nvim" }
+  use { "pocco81/truezen.nvim" }
 
   -- misc
-  use { "lewis6991/gitsigns.nvim", requires = { "nvim-lua/plenary.nvim" } }
   use { "terrortylor/nvim-comment" }
   use { "folke/todo-comments.nvim" }
   use { "windwp/nvim-autopairs" }
-  use { "lukas-reineke/indent-blankline.nvim" }
-  use { "pocco81/truezen.nvim" }
   use { "akinsho/toggleterm.nvim" }
+
   -- the need for speed
   use { "lewis6991/impatient.nvim" }
 end)
@@ -408,23 +408,23 @@ capabilities.textDocument.completion.completionItem.snippetSupport = true
 local function common_on_attach(_, bufnr)
 
   local opts = { buffer = bufnr }
-  map('n', 'gD', vim.lsp.buf.declaration, opts)
-  map('n', 'gd', vim.lsp.buf.definition, opts)
-  map('n', 'K', vim.lsp.buf.hover, opts)
-  map('n', 'gi', vim.lsp.buf.implementation, opts)
-  map('n', '<C-k>', vim.lsp.buf.signature_help, opts)
-  map('n', '<leader>wa', vim.lsp.buf.add_workspace_folder, opts)
-  map('n', '<leader>wr', vim.lsp.buf.remove_workspace_folder, opts)
-  map('n', '<leader>wl', function()
+  map("n", "gD", vim.lsp.buf.declaration, opts)
+  map("n", "gd", vim.lsp.buf.definition, opts)
+  map("n", "K", vim.lsp.buf.hover, opts)
+  map("n", "gi", vim.lsp.buf.implementation, opts)
+  map("n", "<C-k>", vim.lsp.buf.signature_help, opts)
+  map("n", "<leader>wa", vim.lsp.buf.add_workspace_folder, opts)
+  map("n", "<leader>wr", vim.lsp.buf.remove_workspace_folder, opts)
+  map("n", "<leader>wl", function()
     vim.inspect(vim.lsp.buf.list_workspace_folders())
   end, opts)
-  map('n', '<leader>D', vim.lsp.buf.type_definition, opts)
-  map('n', '<leader>rn', vim.lsp.buf.rename, opts)
-  map('n', '[d', vim.diagnostic.goto_prev)
-  map('n', ']d', vim.diagnostic.goto_next)
-  map('n', 'gr', vim.lsp.buf.references, opts)
-  map('n', '<leader>ca', vim.lsp.buf.code_action, opts)
-  map('n', '<leader>so', require('telescope.builtin').lsp_document_symbols, opts)
+  map("n", "<leader>D", vim.lsp.buf.type_definition, opts)
+  map("n", "<leader>rn", vim.lsp.buf.rename, opts)
+  map("n", "[d", vim.diagnostic.goto_prev)
+  map("n", "]d", vim.diagnostic.goto_next)
+  map("n", "gr", vim.lsp.buf.references, opts)
+  map("n", "<leader>ca", vim.lsp.buf.code_action, opts)
+  map("n", "<leader>so", require("telescope.builtin").lsp_document_symbols, opts)
   vim.api.nvim_create_user_command("Format", vim.lsp.buf.formatting, {})
 end
 
@@ -523,7 +523,7 @@ cmp.setup {
 -- ┳━┓┳ ┓┏┓┓┏━┓┏━┓┏━┓┏┏┓┏┏┓┳━┓┏┓┓┳━┓┓━┓
 -- ┃━┫┃ ┃ ┃ ┃ ┃┃  ┃ ┃┃┃┃┃┃┃┃━┫┃┃┃┃ ┃┗━┓
 -- ┛ ┇┇━┛ ┇ ┛━┛┗━┛┛━┛┛ ┇┛ ┇┛ ┇┇┗┛┇━┛━━┛
-
+-- TODO: Rewrite these in lua
 
 -- annoying spaces begone
 vim.cmd([[
