@@ -19,8 +19,7 @@ end
 -- ┃━┛┃  ┃ ┃┃ ┳┃┃┃┃┗━┓
 -- ┇  ┇━┛┇━┛┇━┛┇┇┗┛━━┛
 
-local use = require("packer").use
-require("packer").startup(function()
+require("packer").startup(function(use)
   use { "wbthomason/packer.nvim" }
   use { "nvim-telescope/telescope.nvim", requires =
       { "nvim-lua/plenary.nvim" },
@@ -150,7 +149,7 @@ function map(mode, lhs, rhs, opts)
     if opts then
         options = vim.tbl_extend("force", options, opts)
     end
-    vim.api.nvim_set_keymap(mode, lhs, rhs, options)
+    vim.keymap.set(mode, lhs, rhs, options)
 end
 
 -- ┳━┓o┏┓┓┳━┓o┏┓┓┏━┓┓━┓
@@ -163,13 +162,6 @@ opt = {}
 map('', '<Space>', '<Nop>', { noremap = true, silent = true })
 g.mapleader = ' '
 g.maplocalleader = ' '
-
--- Arduino bindings
-map("n", "<leader>am", ":ArduinoVerify<CR>", opt)
-map("n", "<leader>au", ":ArduinoUpload<CR>", opt)
-map("n", "<leader>ad", ":ArduinoUploadAndSerial<CR>", opt)
-map("n", "<leader>ab", ":ArduinoChooseBoard<CR>", opt)
-map("n", "<leader>ap", ":ArduinoChooseProgrammer<CR>", opt)
 
 -- Telescope bindings
 map("n", "<Leader>gt", ":Telescope git_status <CR>", opt)
@@ -208,7 +200,7 @@ map("n", "<C-j>", ":lua navi('j', 'south')<CR>", { silent = true })
 map("v", "<", "<gv", opt)
 map("v", ">", ">gv", opt)
 
--- TODO figure this out.
+--TODO figure this out.
 map("n", "<Leader>x", ":lua require('core.utils').close_buffer()<CR>", { silent = true }) -- close  buffer
 
 -- Turn off search matches with double-<Esc>
@@ -499,7 +491,7 @@ cmp.setup {
    formatting = {
     format = lspkind.cmp_format({with_text = false, maxwidth = 50})
   },
-  mapping = {
+  mapping = cmp.mapping.preset.insert({
       ["<C-k>"] = cmp.mapping.select_prev_item(),
       ["<C-j>"] = cmp.mapping.select_next_item(),
       ["<C-d>"] = cmp.mapping.scroll_docs(-4),
@@ -528,7 +520,7 @@ cmp.setup {
             fallback()
          end
       end,
-   },
+   }),
    sources = {
       { name = "nvim_lsp" },
       { name = "luasnip" },
@@ -552,12 +544,21 @@ augroup END
 ]], false)
 
 -- Highlight on wank
-vim.cmd([[
-  augroup YankHighlight
-    autocmd!
-    autocmd TextYankPost * silent! lua vim.highlight.on_yank()
-  augroup end
-]], false)
+-- vim.cmd([[
+--   augroup YankHighlight
+--     autocmd!
+--     autocmd TextYankPost * silent! lua vim.highlight.on_yank()
+--   augroup end
+-- ]], false)
+
+local highlight_group = vim.api.nvim_create_augroup('YankHighlight', { clear = true })
+vim.api.nvim_create_autocmd('TextYankPost', {
+  callback = function()
+    vim.highlight.on_yank()
+  end,
+  group = highlight_group,
+  pattern = '*',
+})
 
 -- spelchek
 vim.cmd([[
@@ -568,9 +569,13 @@ vim.cmd([[
 ]], false)
 
 -- Pack it up, pack it in.
-vim.cmd( [[
-  augroup Packer
-    autocmd!
-    autocmd BufWritePost init.lua PackerCompile
-  augroup end
-]], false)
+-- vim.cmd( [[
+--   augroup Packer
+--     autocmd!
+--     autocmd BufWritePost init.lua PackerCompile
+--   augroup end
+-- ]], false)
+
+-- 0.7 autocmd
+local packer_group = vim.api.nvim_create_augroup('Packer', { clear = true })
+vim.api.nvim_create_autocmd('BufWritePost', { command = 'source <afile> | PackerCompile', group = packer_group, pattern = 'init.lua' })
