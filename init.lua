@@ -2,7 +2,6 @@
 -- ┃ ┃┃ ┃  ┗━┓┃ ┃┃┃┃┣━   ┃┃┃┃ ┃┃┳┛┣┻┓
 -- ┇━┛┛━┛  ━━┛┛━┛┛ ┇┻━┛  ┗┻┇┛━┛┇┗┛┇ ┛
 
--- TODO: figure out how to set up LSP for c files
 -- TODO: implement folds
 -- TODO: try: numToStr/Comment.nvim
 -- TODO: try: mhartington/formatter.nvim
@@ -22,7 +21,7 @@ end
 
 local use = require("packer").use
 require("packer").startup(function()
-  use "wbthomason/packer.nvim"
+  use { "wbthomason/packer.nvim" }
   use { "nvim-telescope/telescope.nvim", requires =
       { "nvim-lua/plenary.nvim" },
       { "nvim-telescope/telescope-fzf-native.nvim", run = "make" },
@@ -39,14 +38,11 @@ require("packer").startup(function()
   use { "L3MON4D3/LuaSnip" } -- Snippets plugin
 
   -- filetype plugins
-  use {"amadeus/vim-mjml", ft = {"mjml"}}
-  use {"Fymyte/mbsync.vim", ft = {"mbsync"}}
-  use {"itspriddle/vim-marked", ft = {"markdown"}}
-  use {"plasticboy/vim-markdown", ft = {"markdown"}}
+  use { "amadeus/vim-mjml", ft = {"mjml"} }
+  use { "Fymyte/mbsync.vim", ft = {"mbsync"} }
+  use { "itspriddle/vim-marked", ft = {"markdown"} }
+  use { "plasticboy/vim-markdown", ft = {"markdown"} }
   -- use {"polarmutex/beancount.nvim", ft = {"beancount"}}
-  use {"npxbr/glow.nvim", ft = {"markdown"}}
-  use { "Iron-E/nvim-libmodal", ft = {"markdown"}}
-  use { "Iron-E/nvim-typora", ft = {"markdown"}}
 
   -- colors & ui!
   use { "norcalli/nvim-colorizer.lua" }
@@ -54,7 +50,6 @@ require("packer").startup(function()
   -- use { "folke/tokyonight.nvim" }
   -- use { "EdenEast/nightfox.nvim" }
   use { "nvim-lualine/lualine.nvim", requires = {"kyazdani42/nvim-web-devicons"} }
-  -- use { "windwp/windline.nvim", requires = {"kyazdani42/nvim-web-devicons"} }
 
   -- misc
   use { "lewis6991/gitsigns.nvim", requires = { "nvim-lua/plenary.nvim" } }
@@ -64,11 +59,8 @@ require("packer").startup(function()
   use { "lukas-reineke/indent-blankline.nvim" }
   use { "pocco81/truezen.nvim" }
   use { "akinsho/toggleterm.nvim" }
-  use { "stevearc/vim-arduino" }
-  use { "stevearc/dressing.nvim" }
   -- the need for speed
   use { "lewis6991/impatient.nvim" }
-  -- use { "nathom/filetype.nvim" }
 end)
 
 -- ┏━┓┳━┓┏┓┓o┏━┓┏┓┓┓━┓
@@ -159,22 +151,6 @@ function map(mode, lhs, rhs, opts)
         options = vim.tbl_extend("force", options, opts)
     end
     vim.api.nvim_set_keymap(mode, lhs, rhs, options)
-end
-
-local function arduino_status()
-  local ft = vim.api.nvim_buf_get_option(0, "ft")
-  if ft ~= "arduino" then
-    return ""
-  end
-  local port = vim.fn["arduino#GetPort"]()
-  local line = string.format("[%s]", vim.g.arduino_board)
-  if vim.g.arduino_programmer ~= "" then
-    line = line .. string.format(" [%s]", vim.g.arduino_programmer)
-  end
-  if port ~= 0 then
-    line = line .. string.format(" (%s:%s)", port, vim.g.arduino_serial_baud)
-  end
-  return line
 end
 
 -- ┳━┓o┏┓┓┳━┓o┏┓┓┏━┓┓━┓
@@ -309,7 +285,6 @@ require('impatient')
 
 -- lualine - stop yak shaving and use a fucking default.
 require('lualine').setup()
--- require('wlsample.evil_line')
 
 -- pretty pretty pretty good
 require('colorizer').setup()
@@ -480,13 +455,6 @@ lsp_installer.on_server_ready(function(server)
         debounce_text_changes = 150,
       },
     }
-    if server.name == "arduino_language_server" then
-      opts.on_new_config = function (config, root_dir)
-            local partial_cmd = server:get_default_options().cmd
-            local MY_FQBN = "arduino:avr:nano"
-            config.cmd = vim.list_extend(partial_cmd, { "-fqbn", MY_FQBN })
-        end
-    end
     if server.name == "sumneko_lua" then
       opts.settings = {
           Lua = {
